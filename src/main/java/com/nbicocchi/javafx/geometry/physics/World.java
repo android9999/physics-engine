@@ -40,6 +40,11 @@ public class World {
 
     public static void Update()
     {
-        f++;
+        for (DrawableShape shape : shapes)
+        {
+            double dx = 0.1;
+
+            shape.setBounds( new Rectangle2D(shape.getBounds().getMinX() + dx , shape.getBounds().getMinY(), shape.getBounds().getWidth(), shape.getBounds().getHeight() ) );
+        }
     }
 }

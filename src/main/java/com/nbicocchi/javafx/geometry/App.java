@@ -25,6 +25,12 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+
 
 public class App extends Application {
     Canvas canvas;
@@ -39,8 +45,10 @@ public class App extends Application {
         launch(args);
     }
 
+
     @Override
     public void start(Stage primaryStage) {
+
         HBox hbox = new HBox();
         hbox.setSpacing(10);
         hbox.setAlignment(Pos.BOTTOM_CENTER);
@@ -108,14 +116,32 @@ public class App extends Application {
             paint();
         });
 
-        World.Update();
-
         Scene scene = new Scene(bp);
-        primaryStage.setTitle("Geometry Application");
+        paint();
+
+
+        Pane root = new Pane();
+
+        primaryStage.setTitle("Animation Timer Example");
         primaryStage.setScene(scene);
         primaryStage.show();
-        paint();
+
+        AnimationTimer timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                // Code to be executed on every frame
+                update(now);
+            }
+        };
+
+        timer.start();
     }
+
+    private void update(long now) {
+        // Your code here
+        World.Update();
+    }
+
 
     public void paint() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -135,3 +161,5 @@ public class App extends Application {
         }
     }
 }
+
+
