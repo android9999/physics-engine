@@ -5,6 +5,7 @@ import com.nbicocchi.javafx.geometry.shapes.DrawableShape;
 import com.nbicocchi.javafx.geometry.shapes.Rectangle;
 import com.nbicocchi.javafx.geometry.shapes.Triangle;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
@@ -12,10 +13,31 @@ import java.util.List;
 
 public class World {
 
-    static int f = 0;
+    private static World world;
 
+    private List<Body> bodies;
+
+    private World()
+    {
+        bodies = new ArrayList<>();
+    }
+
+    public static World getInstance()
+    {
+        if(world == null)
+        {
+            world = new World();
+        }
+        return world;
+    }
+
+    public List<Body> getBodies()
+    {
+        return bodies;
+    }
+
+    /*
     public static List<DrawableShape> shapes  = new ArrayList<>();
-
     public static void addShape(double x, double y, String type, double width, double height, Color color) {
         Rectangle2D bounds = new Rectangle2D(x, y, width, height);
         DrawableShape shape;
@@ -37,14 +59,79 @@ public class World {
             }
         }
     }
+*/
 
-    public static void Update()
+    public void addBody
+            (double x,
+             double y,
+             Body.ShapeType shapeType,
+             double width,
+             double height,
+             Color color,
+             Vector linearVelocity,
+             double rotation,
+             double rotationVelocity,
+             double density,
+             double restitution,
+             double area,
+             boolean active,
+             double radius
+            )
     {
-        for (DrawableShape shape : shapes)
-        {
-            double dx = 0.1;
+        double scale = 4;
+        width *= scale;
+        height *= scale;
+        radius *= scale;
 
-            shape.setBounds( new Rectangle2D(shape.getBounds().getMinX() + dx , shape.getBounds().getMinY(), shape.getBounds().getWidth(), shape.getBounds().getHeight() ) );
+        bodies.add(new Body(x, y, linearVelocity, rotation, rotationVelocity, density, restitution, area, active, radius, height, width, shapeType, color));
+    }
+
+    static Vector displacement = new Vector(0, 0.1);
+
+    void ifCollision(Body hittingBody, Body hittedBody)
+    {
+        System.out.println(bodies.indexOf(hittingBody) + " is colliding with ");
+        System.out.println(bodies.indexOf(hittedBody));
+    }
+
+    public void Update()
+    {
+        moveBodies();
+    }
+
+    private static Vector getNormalOfCircles(Vector c1, Vector c2)
+    {
+        return c1.subtract(c2).normalized();
+    }
+
+    private void moveBodies()
+    {
+        int i = 0;
+
+        for (Body body : bodies)
+        {
+            if (i == 1)
+            {
+                body.move(displacement);
+
+                System.out.println( bodies.get(0).getPosition().getY() - body.getPosition().getY());
+                System.out.println( bodies.get(0).radius + body.radius);
+            }
+            i++;
+        }
+
+        Collisions.checkCollisions(bodies, this::ifCollision);
+    }
+
+    public void removeBody(Body body)
+    {
+        bodies.remove(body);
+    }
+
+    public void renderBodies(GraphicsContext gc)
+    {
+        for (Body body : bodies) {
+            body.getShape().paint(gc);
         }
     }
 }
