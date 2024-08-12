@@ -1,26 +1,43 @@
 package com.nbicocchi.javafx.geometry.physics.math;
 
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+
 public class Vector {
 
+    //region Predefined values
     public static Vector zero = new Vector(0, 0);
     public static Vector right = new Vector(1, 0);
-    public static Vector up = new Vector(0, 1);
+    public static Vector left = new Vector(-1, 0);
+    public static Vector up = new Vector(0, -1);
+    public static Vector down = new Vector(0, 1);
+    //endregion
 
-    //region Vector Data
+    //region Vector attributes
     private double x;
     private double y;
+    //endregion
 
+    //region constructors
     public Vector(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
-    public double getX() {
-        return x;
+    // only for unit vectors
+    public Vector(double theta) {
+        this.x = cos(theta);
+        this.y = sin(theta);
     }
 
-    public double getY() {
-        return y;
+    public Vector(Vector v) {
+        this.x = v.x;
+        this.y = v.y;
+    }
+
+    public static Vector polarToCartesian(double theta, double r)
+    {
+        return new Vector(cos(theta)*r, sin(theta)*r);
     }
     //endregion
 
@@ -43,6 +60,12 @@ public class Vector {
         this.y -= v.y;
     }
 
+    public void invert()
+    {
+        this.x = -this.x;
+        this.y = -this.y;
+    }
+
     public void scale(double m) {
         this.x *= m;
         this.y *= m;
@@ -59,13 +82,18 @@ public class Vector {
     }
     //endregion
 
-    //region Vectorial Vector operations
+    //region Vector operations
     public Vector add(Vector v) {
         return new Vector(x + v.x, y + v.y);
     }
 
     public Vector subtract(Vector v) {
         return new Vector(x - v.x, y - v.y);
+    }
+
+    public Vector inverted()
+    {
+        return new Vector(-x, -y);
     }
 
     public Vector multiply(double m)
@@ -100,6 +128,14 @@ public class Vector {
     //endregion
 
     //region Vector Properties
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
     public double lengthSquare() {
 
         return x * x + y * y;
@@ -109,5 +145,4 @@ public class Vector {
         return Math.sqrt(lengthSquare());
     }
     //endregion
-
 }

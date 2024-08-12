@@ -14,8 +14,24 @@ public class WorldController {
     private Body selected;
     private UIComponents uiComponents;
 
-    public WorldController(UIComponents uiComponents) {
+    private static WorldController instance;
+
+    private final static int width = 1000;
+    private final static int height = 500;
+
+    private WorldController()
+    {
         this.world = new World(new WorldClock(this));
+    }
+
+    public static WorldController getInstance()
+    {
+        if(instance == null)
+        {
+            instance = new WorldController();
+        }
+
+        return instance;
     }
 
     public void setUIComponents(UIComponents uiComponents) {
@@ -29,8 +45,8 @@ public class WorldController {
         ;
     }
 
-    public void addShape(String shapeType, double size, double x, double y, Color color) {
-        world.addBody(300, y, Body.ShapeType.valueOf(shapeType), size, size, color, Vector.zero, 0, 0, 0, 0, 0, true, size);
+    public void addShape(String shapeType, double size, double x, double y, Color color, double theta, double r) {
+        world.addBody(x, y, Body.ShapeType.valueOf(shapeType), size, size, color, Vector.polarToCartesian(theta, r), 0, 0, 0, 0, 0, true, size);
     }
 
     public boolean selectShape(double x, double y) {
@@ -78,13 +94,27 @@ public class WorldController {
         }
     }
 
-    public void update() {
-        world.update();
+    public void update(long now) {
+        world.update(now);
     }
 
     public void requestRender() {
         if (uiComponents != null) {
             uiComponents.paint(); // Request the UIComponents to repaint the canvas
         }
+    }
+
+    protected UIComponents getUiComponents()
+    {
+        return uiComponents;
+    }
+
+    public static int getWidth()
+    {
+        return width;
+    }
+    public static int getHeight()
+    {
+        return height;
     }
 }

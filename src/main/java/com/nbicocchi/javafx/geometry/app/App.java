@@ -18,12 +18,13 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        worldController = new WorldController(uiComponents);
+        worldController = WorldController.getInstance();
         uiComponents = new UIComponents(worldController);
         worldController.setUIComponents(uiComponents);
 
         BorderPane root = new BorderPane();
-        root.setBottom(uiComponents.getHBox());
+        root.setBottom(uiComponents.getHBoxLow());
+        root.setTop(uiComponents.getHBoxHigh());
         root.setCenter(uiComponents.getCanvasPane());
 
         Scene scene = new Scene(root);

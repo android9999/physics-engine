@@ -18,26 +18,50 @@ import javafx.scene.paint.Color;
 public class UIComponents {
     private final Canvas canvas;
     private final Pane canvasPane;
+
     private final ColorPicker cpForeground;
     private final ColorPicker cpBackground;
-    private final Slider slider;
+
+    private final Slider areaSlider;
+    private final Slider angleSlider;
+    private final Slider speedSlider;
+
     private final ChoiceBox<String> shapeChooser;
-    private final HBox hbox;
+    private final HBox hboxLow;
+    private final HBox hboxHigh;
+
     private final WorldController worldController;
+
+    private final double maxSpeed = 100;
+    private final double maxSize = 100;
+
+    private final int width;
+    private final int height;
 
     public UIComponents(WorldController worldController) {
         this.worldController = worldController;
 
-        canvas = new Canvas(600, 600);
+        width = worldController.getWidth();
+        height = worldController.getHeight();
+
+        canvas = new Canvas(width, height);
         canvasPane = new Pane(canvas);
 
         shapeChooser = new ChoiceBox<>();
         shapeChooser.setItems(FXCollections.observableArrayList(worldController.getShapeTypes()));
         shapeChooser.getSelectionModel().select("Circle");
 
-        slider = new Slider(10, 25, 10);
-        slider.setTooltip(new Tooltip("Circle Radius"));
-        slider.setShowTickMarks(true);
+        areaSlider = new Slider(10, maxSize, 10);
+        areaSlider.setTooltip(new Tooltip("Circle Radius"));
+        areaSlider.setShowTickMarks(true);
+
+        angleSlider = new Slider(0, Math.TAU, 1);
+        angleSlider.setTooltip(new Tooltip("velocity's angle"));
+        angleSlider.setShowTickMarks(true);
+
+        speedSlider = new Slider(0, maxSpeed, 5);
+        speedSlider.setTooltip(new Tooltip("velocity's magnitude"));
+        speedSlider.setShowTickMarks(true);
 
         cpForeground = new ColorPicker();
         cpForeground.setTooltip(new Tooltip("Circle Color"));
@@ -46,16 +70,25 @@ public class UIComponents {
         cpBackground.setTooltip(new Tooltip("Background Color"));
         cpBackground.setValue(Color.web("#000000"));
 
-        hbox = new HBox(shapeChooser, cpBackground, cpForeground, slider);
-        hbox.setSpacing(10);
-        hbox.setAlignment(Pos.BOTTOM_CENTER);
-        hbox.setPadding(new Insets(20));
+        hboxLow = new HBox(shapeChooser, cpBackground, cpForeground, areaSlider);
+        hboxLow.setSpacing(10);
+        hboxLow.setAlignment(Pos.BOTTOM_CENTER);
+        hboxLow.setPadding(new Insets(20));
+
+        hboxHigh = new HBox(angleSlider, speedSlider);
+        hboxHigh.setSpacing(10);
+        hboxHigh.setAlignment(Pos.TOP_CENTER);
+        hboxHigh.setPadding(new Insets(20));
 
         setupEventHandlers();
     }
 
-    public HBox getHBox() {
-        return hbox;
+    public HBox getHBoxLow() {
+        return hboxLow;
+    }
+
+    public HBox getHBoxHigh() {
+        return hboxHigh;
     }
 
     public Pane getCanvasPane() {
@@ -65,7 +98,7 @@ public class UIComponents {
     private void setupEventHandlers() {
         canvasPane.setOnMousePressed(event -> {
             if (!worldController.selectShape(event.getX(), event.getY())) {
-                worldController.addShape(shapeChooser.getValue(), slider.getValue(), event.getX(), event.getY(), cpForeground.getValue());
+                worldController.addShape(shapeChooser.getValue(), areaSlider.getValue(), event.getX(), event.getY(), cpForeground.getValue(), angleSlider.getValue(), speedSlider.getValue());
             }
             paint();
         });
@@ -77,7 +110,7 @@ public class UIComponents {
             }
         });
 
-        slider.valueProperty().addListener((observable, oldValue, newValue) -> {
+        areaSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             worldController.updateSelectedShapeSize(newValue.doubleValue());
             paint();
         });
@@ -97,4 +130,5 @@ public class UIComponents {
 
         worldController.render(gc);
     }
+
 }

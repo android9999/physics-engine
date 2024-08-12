@@ -28,7 +28,7 @@ public class WorldClock {
     }
 
     private void updateWorld(long now) {
-        worldController.update(); // Update the world state
+        worldController.update(now); // Update the world state
         worldController.requestRender();
     }
 }
