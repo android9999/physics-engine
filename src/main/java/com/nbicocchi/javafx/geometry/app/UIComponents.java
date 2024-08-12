@@ -1,6 +1,6 @@
 package com.nbicocchi.javafx.geometry.app;
 
-import javafx.animation.AnimationTimer;
+import com.nbicocchi.javafx.geometry.physics.world.WorldController;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -62,17 +62,6 @@ public class UIComponents {
         return canvasPane;
     }
 
-    public void startAnimationTimer() {
-        AnimationTimer timer = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                worldController.update(now);
-                paint();
-            }
-        };
-        timer.start();
-    }
-
     private void setupEventHandlers() {
         canvasPane.setOnMousePressed(event -> {
             if (!worldController.selectShape(event.getX(), event.getY())) {
@@ -101,7 +90,7 @@ public class UIComponents {
         cpBackground.valueProperty().addListener((observable, oldValue, newValue) -> paint());
     }
 
-    private void paint() {
+    public void paint() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.setFill(cpBackground.getValue());
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());

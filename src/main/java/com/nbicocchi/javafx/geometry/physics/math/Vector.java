@@ -1,4 +1,4 @@
-package com.nbicocchi.javafx.geometry.physics;
+package com.nbicocchi.javafx.geometry.physics.math;
 
 public class Vector {
 

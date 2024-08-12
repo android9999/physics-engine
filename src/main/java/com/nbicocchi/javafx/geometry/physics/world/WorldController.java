@@ -1,8 +1,8 @@
-package com.nbicocchi.javafx.geometry.app;
+package com.nbicocchi.javafx.geometry.physics.world;
 
-import com.nbicocchi.javafx.geometry.physics.Body;
-import com.nbicocchi.javafx.geometry.physics.Vector;
-import com.nbicocchi.javafx.geometry.physics.World;
+import com.nbicocchi.javafx.geometry.app.UIComponents;
+import com.nbicocchi.javafx.geometry.physics.body.Body;
+import com.nbicocchi.javafx.geometry.physics.math.Vector;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -12,9 +12,14 @@ import java.util.Arrays;
 public class WorldController {
     private final World world;
     private Body selected;
+    private UIComponents uiComponents;
 
-    public WorldController() {
-        this.world = World.getInstance();
+    public WorldController(UIComponents uiComponents) {
+        this.world = new World(new WorldClock(this));
+    }
+
+    public void setUIComponents(UIComponents uiComponents) {
+        this.uiComponents = uiComponents;
     }
 
     public String[] getShapeTypes() {
@@ -31,7 +36,7 @@ public class WorldController {
     public boolean selectShape(double x, double y) {
         selected = null;
         for (Body body : world.getBodies()) {
-            if (body.getShape().getBounds().contains(x, y)) {
+            if (body.getShapeComponent().getShape().getBounds().contains(x, y)) {
                 selected = body;
                 return true;
             }
@@ -48,19 +53,19 @@ public class WorldController {
 
     public void updateSelectedShapeSize(double size) {
         if (selected != null) {
-            Rectangle2D currentBounds = selected.getShape().getBounds();
+            Rectangle2D currentBounds = selected.getShapeComponent().getShape().getBounds();
             double minX = currentBounds.getMinX();
             double minY = currentBounds.getMinY();
 
             // Create a new Rectangle2D with the updated size and the current minX and minY
             Rectangle2D newBounds = new Rectangle2D(minX, minY, size, size);
-            selected.getShape().setBounds(newBounds);  // Ensure this method accepts Rectangle2D
+            selected.getShapeComponent().getShape().setBounds(newBounds);  // Ensure this method accepts Rectangle2D
         }
     }
 
     public void updateSelectedShapeColor(Color color) {
         if (selected != null) {
-            selected.getShape().setColor(color);
+            selected.getShapeComponent().getShape().setColor(color);
         }
     }
 
@@ -69,11 +74,17 @@ public class WorldController {
         if (selected != null) {
             gc.setStroke(Color.YELLOW);
             gc.setLineWidth(5);
-            gc.strokeRect(selected.getShape().getBounds().getMinX(), selected.getShape().getBounds().getMinY(), selected.getShape().getBounds().getWidth(), selected.getShape().getBounds().getHeight());
+            gc.strokeRect(selected.getShapeComponent().getShape().getBounds().getMinX(), selected.getShapeComponent().getShape().getBounds().getMinY(), selected.getShapeComponent().getShape().getBounds().getWidth(), selected.getShapeComponent().getShape().getBounds().getHeight());
         }
     }
 
-    public void update(long now) {
-        world.Update();
+    public void update() {
+        world.update();
+    }
+
+    public void requestRender() {
+        if (uiComponents != null) {
+            uiComponents.paint(); // Request the UIComponents to repaint the canvas
+        }
     }
 }
