@@ -16,9 +16,6 @@ public class WorldController {
 
     private static WorldController instance;
 
-    private final static int width = 1000;
-    private final static int height = 500;
-
     private WorldController()
     {
         this.world = new World(new WorldClock(this));
@@ -107,14 +104,5 @@ public class WorldController {
     protected UIComponents getUiComponents()
     {
         return uiComponents;
-    }
-
-    public static int getWidth()
-    {
-        return width;
-    }
-    public static int getHeight()
-    {
-        return height;
     }
 }

@@ -1,6 +1,7 @@
 package com.nbicocchi.javafx.geometry.app;
 
 import com.nbicocchi.javafx.geometry.physics.world.WorldController;
+import com.nbicocchi.javafx.geometry.physics.world.WorldProperties;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -32,26 +33,18 @@ public class UIComponents {
 
     private final WorldController worldController;
 
-    private final double maxSpeed = 100;
-    private final double maxSize = 100;
-
-    private final int width;
-    private final int height;
 
     public UIComponents(WorldController worldController) {
         this.worldController = worldController;
 
-        width = worldController.getWidth();
-        height = worldController.getHeight();
-
-        canvas = new Canvas(width, height);
+        canvas = new Canvas(WorldProperties.WIDTH, WorldProperties.HEIGHT);
         canvasPane = new Pane(canvas);
 
         shapeChooser = new ChoiceBox<>();
-        shapeChooser.setItems(FXCollections.observableArrayList(worldController.getShapeTypes()));
+        importShapeTypes();
         shapeChooser.getSelectionModel().select("Circle");
 
-        areaSlider = new Slider(10, maxSize, 10);
+        areaSlider = new Slider(WorldProperties.MINSIZE, WorldProperties.MAXSIZE, 10);
         areaSlider.setTooltip(new Tooltip("Circle Radius"));
         areaSlider.setShowTickMarks(true);
 
@@ -59,7 +52,7 @@ public class UIComponents {
         angleSlider.setTooltip(new Tooltip("velocity's angle"));
         angleSlider.setShowTickMarks(true);
 
-        speedSlider = new Slider(0, maxSpeed, 5);
+        speedSlider = new Slider(WorldProperties.MINSPEED, WorldProperties.MAXSPEED, 5);
         speedSlider.setTooltip(new Tooltip("velocity's magnitude"));
         speedSlider.setShowTickMarks(true);
 
@@ -129,6 +122,11 @@ public class UIComponents {
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
         worldController.render(gc);
+    }
+
+    private void importShapeTypes()
+    {
+        shapeChooser.setItems(FXCollections.observableArrayList(worldController.getShapeTypes()));
     }
 
 }

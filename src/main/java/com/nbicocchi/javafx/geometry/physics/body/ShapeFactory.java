@@ -10,13 +10,13 @@ public class ShapeFactory {
         switch (shapeType) {
             case Circle:
                 return new Circle(bounds, color);
-            case Box:
-            case Rectangle:
-                return new Rectangle(bounds, color);
-            case Triangle:
-                return new Triangle(bounds, color);
+//            case Box:
+//            case Rectangle:
+//                return new Rectangle(bounds, color);
+//            case Triangle:
+//                return new Triangle(bounds, color);
             default:
-                throw new IllegalArgumentException("Unsupported shape type");
+                throw new IllegalArgumentException("Not Implemented shape type");
         }
     }
 }

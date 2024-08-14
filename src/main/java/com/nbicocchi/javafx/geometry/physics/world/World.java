@@ -1,6 +1,5 @@
 package com.nbicocchi.javafx.geometry.physics.world;
 
-import com.nbicocchi.javafx.geometry.app.UIComponents;
 import com.nbicocchi.javafx.geometry.physics.body.Body;
 import com.nbicocchi.javafx.geometry.physics.math.Collisions;
 import com.nbicocchi.javafx.geometry.physics.math.Vector;
@@ -23,8 +22,8 @@ public class World {
         this.clock = worldClock;
         bodies = new ArrayList<>();
 
-        width = WorldController.getWidth();
-        height = WorldController.getHeight();
+        width = WorldProperties.WIDTH;
+        height = WorldProperties.HEIGHT;
 
         start();
     }
@@ -72,7 +71,7 @@ public class World {
 
         moveBodies(deltaTime);
         deleteOutsideBodies();
-        Collisions.checkCollisions(bodies, this::handleCollision);
+        Collisions.checkCirclesCollisions(bodies, this::handleCollision);
     }
 
     private void moveBodies(double deltaTime) {
